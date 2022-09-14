@@ -82,4 +82,35 @@ public class MyKafkaUtil {
 
         return kafkaProducer;
     }
+
+    /**
+     * Kafka-Source DDL语句
+     * @param topic 数据源主题
+     * @param groupId 消费者组
+     * @return 凭借好的Kafka数据源 DDL 语句
+     */
+    public static String getKafkaDDL(String topic,String groupId){
+        return " with ('connector' = 'kafka', " +
+                " 'topic' = '" + topic + "'," +
+                " 'properties.bootstrap.servers' = '" + KAFKA_SERVER + "', " +
+                " 'properties.group.id' = '" + groupId + "', " +
+                " 'format' = 'json', " +
+                " 'scan.startup.mode' = 'group-offsets')";
+
+    }
+
+    /**
+     * 最终结果写入kafka的 ext拓展语句 --- Kafka-Sink DDL语句
+     * @param topic 输出到kafka的目标主题
+     * @return 拼接好的kafka-Sink DDL语句
+     */
+    public static String getUpsertKafkaDDL(String topic){
+        return "WITH ( " +
+                "  'connector' = 'upsert-kafka', " +
+                "  'topic' = '" + topic + "', " +
+                "  'properties.bootstrap.servers' = '" + KAFKA_SERVER + "', " +
+                "  'key.format' = 'json', " +
+                "  'value.format' = 'json' " +
+                ")";
+    }
 }
